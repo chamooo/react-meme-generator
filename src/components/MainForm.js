@@ -4,29 +4,70 @@ import memesData from "../memesData1";
 
 const MainForm = () => {
 
-    const {memes} = memesData.data;
+    const [meme, setMeme] = useState({
+        topText: '',
+        bottomText: '',
+        randomImage: 'https://i.imgflip.com/265j.jpg'
+    }) ;
 
-    const [memeImage, setMemeImage] = useState('') ;
+    const [allMemeImages, setAllMemeImages] = useState(memesData);
 
     function getMemeImage(e) {
         e.preventDefault();
-        let randomValue = Math.floor((Math.random()) * memes.length);
-        setMemeImage(memeImage => memes[randomValue].url)
-        console.log(memeImage)
+
+        const {memes} = allMemeImages.data;
+        const randomValue = Math.floor((Math.random()) * memes.length);
+        const url = memes[randomValue].url;
+
+        setMeme(prevState => {
+            return {
+                ...prevState,
+                randomImage: url
+            }
+        })
     }
 
+    const [formData, setFormData] = useState(
+        {
+            topText: '',
+            bottomText: ''
+        }
+    );
 
-
-
+    function changeText(e) {
+        const {name, value} = e.target;
+        setFormData(prevState => {
+            return {
+                ...prevState,
+                [name]: value
+            }
+        });
+    }
     return (
         <main>
             <form className='form'>
-                <input className="form--input" placeholder="Top text"/>
-                <input className="form--input" placeholder="Bottom text"/>
-                <button onClick={getMemeImage} className="form--button">Get a new meme image 🖼</button>
+                <input
+                    onChange={changeText}
+                    name="topText"
+                    className="form--input"
+                    placeholder="Top text"
+                />
+                <input
+                    onChange={changeText}
+                    name="bottomText"
+                    className="form--input"
+                    placeholder="Bottom text"
+                />
+                <button
+                    onClick={getMemeImage}
+                    className="form--button">
+                    Get a new meme image 🖼
+                </button>
             </form>
-            <div className="meme-img">
-                <img src={memeImage} alt=""/>
+            <div className="meme">
+                <img src={meme.randomImage} className="meme--image" />
+                <h2 className="meme--text top">{formData.topText}</h2>
+                <h2 className="meme--text bottom">{formData.bottomText}</h2>
             </div>
         </main>
     );
